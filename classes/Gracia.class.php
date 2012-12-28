@@ -211,26 +211,31 @@ class Gracia {
             imagettftext($this->img, $size, 0, $x, $y, $this->getColorAllocate($hexa), $this->font_path, $text);
         } else  {
             header("Content-type: text/html");
-            exit('Spécifiez votre police avec <strong>setFont();</strong> pour utiliser cette méthode.');
+            exit('Specify your font with <strong>setFont</strong> to use this method.');
         }
     }
     
     /**
      * @desc Set a border to the picture
      * @param string $hexa
+     * @param int $border_pxl => the density of the border
      */
-    public function setBorder($hexa) {
+    public function setBorder($hexa, $border_pxl = 1) {
         if($this->verifyHexa($hexa)) {
             $color = $this->getColorAllocate($hexa);
+            $border_pxl = (int) $border_pxl;
             
             $weight = $this->x - 1;
             $height = $this->y - 1;
             $x = 0;
             $y = 0;
-            imageline($this->img, $x, $y, $x, $y+$height, $color);
-            imageline($this->img, $x, $y, $x+$weight, $y, $color);
-            imageline($this->img, $x+$weight, $y, $x+$weight, $y+$height, $color);
-            imageline($this->img, $x, $y+$height, $x+$weight, $y+$height, $color);            
+            
+            for($i = 0; $i < $border_pxl; $i++) {
+                imageline($this->img, $x + $i, $y + $i, $x + $i, $y + $height + $i, $color);
+                imageline($this->img, $x + $i, $y + $i, $x + $weight + $i, $y + $i, $color);
+                imageline($this->img, $x + $weight - $i, $y - $i, $x + $weight - $i, $y + $height - $i, $color);
+                imageline($this->img, $x - $i, $y + $height - $i, $x + $weight - $i, $y + $height - $i, $color);                   
+            }      
         }
     }
     
