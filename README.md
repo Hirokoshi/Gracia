@@ -121,6 +121,34 @@ This method merges the current picture with another image. *file_path* is the pa
 
 Sets a new name to the picture.
 
+###resize
+`resize(int $w, $int $h)`
+
+This method resizes the current image. *w* is the new width and *h* is the new height.
+
+######Example 
+`$obj->resize(300, 100);`
+
+###createThumbnail()
+`createThumbnail(string $thumb_name);`
+
+This method creates a thumbnail from the current image and saves it in *thumb_name*. The thumbnail's proportions are calculated automatically. 
+
+######Example
+`$obj->createThumbnail('img/thumb_picture'); //creates a thumbnail "thumb_picture.png" in the img folder`
+
+###show()
+
+Shows the image.
+
+###save
+`save(string $path_name)`
+
+Saves the image into *path_name*.
+
+######Example
+`$obj->save('img/mypicture'); //saves the image into img/mypicture.png
+=======
 ###show()
 
 Shows the image.
