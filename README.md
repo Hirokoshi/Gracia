@@ -65,9 +65,9 @@ $obj->setPixel(50, 50, '#000");
 `
 
 ###setLine
-`setLine(int $x1, int $y1, int $x2, int $y2, string $hexa)`
+`setLine(int $x1, int $y1, int $x2, int $y2, string $hexa, int $density_pxl = 1)`
 
-Draws a line in the picture between *(x1, y1)* and *(x2, y2)*. *hexa* is the hexadecimal color code.
+Draws a line in the picture between *(x1, y1)* and *(x2, y2)* with *density_pxl* density. *hexa* is the hexadecimal color code.
 
 ######Example
 `$obj->setLine(120, 40, 220, 40, "#abcdef");`
