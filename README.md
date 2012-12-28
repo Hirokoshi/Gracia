@@ -147,8 +147,8 @@ Shows the image.
 Saves the image into *path_name*.
 
 ######Example
-`$obj->save('img/mypicture'); //saves the image into img/mypicture.png
-=======
+`$obj->save('img/mypicture'); //saves the image into img/mypicture.png`
+
 ###show()
 
 Shows the image.
