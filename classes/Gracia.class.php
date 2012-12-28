@@ -146,8 +146,9 @@ class Gracia {
      * @param int $x2
      * @param int $y2
      * @param string $hexa => hexadecimal color
+     * @param string $density_pxl => the density of the line
      */
-    public function setLine($x1, $y1, $x2, $y2, $hexa) {
+    public function setLine($x1, $y1, $x2, $y2, $hexa, $density_pxl = 1) {
         $x1 = (int) $x1;
         $x2 = (int) $x2;
         $y1 =(int) $y1;
@@ -155,7 +156,10 @@ class Gracia {
         
         if($this->verifyHexa($hexa)) {
             $color = $this->getColorAllocate($hexa);
-            imageline($this->img, $x1, $y1, $x2, $y2, $color);
+            
+            for($i = 0; $i < $density_pxl; $i++) {
+                imageline($this->img, $x1, $y1 + $i, $x2, $y2 + $i, $color);
+            }
         } else {
             header("Content-type: text/html");
             return exit("Your hexadecimal color is incorrect.");            
@@ -292,17 +296,31 @@ class Gracia {
      * @desc Resize the current picture
      * @param int $w => new width
      * @param int $h => new height
-     * @param string $new_name => new name (optional)
      */
-    public function resize($w, $h, $new_name = null) {
+    public function resize($w, $h) {
+        $w = (int) $w;
+        $h = (int) $h;
+        
         $min = imagecreatetruecolor($w, $h);
         imagecopyresampled($min, $this->img, 0, 0, 0, 0, $w, $h, $this->x, $this->y);
-        if(isset($new_name)) {
-            $new_name = (string) $new_name;
-            imagepng($min, $new_name.'.png');
-        } else {
-            imagepng($min);
-        }
+        
+        $this->img = $min;
+    }
+    
+    /**
+     * @desc Create a thumbnail from the image
+     * @param string $thumb_name => thumbnail name
+     */
+    public function createThumbnail($thumb_name) {
+        $reduction = ((300 * 100) / $this->x);
+        $thumb_height = (($this->y * $reduction) / 100);
+        $thumb_width = 300;
+        
+        $thumbnail = imagecreatetruecolor($thumb_width, $thumb_height);
+        imagecopyresampled($thumbnail, $this->img, 0, 0, 0, 0, $thumb_width, $thumb_height, $this->x, $this->y);
+        
+        imagepng($thumbnail, $thumb_name.'.png');
+        
     }
     
     /**
