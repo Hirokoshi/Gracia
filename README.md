@@ -4,6 +4,8 @@ Gracia is a quick library to create and manage pictures with php.
 
 This library can be used only to create or manage **empty** pictures. GraciaJPG and GraciaPNG are coming soon :-).
 
+**Last stable version : 0.2**
+
 License
 ----------
 Author : Elyas Kamel (Hirokoshi)
@@ -34,43 +36,43 @@ The constructor creates an empty picture with a *name*, *x* width and *y* height
 `$obj = new Gracia("myPicture", 350, 150);`
 
 ###setBackground
-`setBackground(string $hexa)`
+`setBackground(string $colorName)`
 
-This method sets a background to the picture. The hexadecimal color of the background is defined in *hexa* parameter.
+This method sets a background to the picture. The hexadecimal color code / color name of the background is defined in *colorName* parameter.
 
 
 ######Example
 `
-$obj->setBackground("#000"); //sets a black background to the picture
+$obj->setBackground("yellow"); //sets a black background to the picture
 `
 
 ###setText
-`setText(int $size, int $x, int $y, string $text, string $hexa)`
+`setText(int $size, int $x, int $y, string $text, string $colorName)`
 
-This method sets a text to the picture with *size, x position, y position, the label of the text and the hexadecimal code color*.
+This method sets a text to the picture with *size, x position, y position, the label of the text and the hexadecimal code or color name*.
 
 ######Example
 `
-$obj->setText(14, 120, 30, "Hello world!", "#abcdef"); //write "Hello world" in the picture
+$obj->setText(14, 120, 30, "Hello world!", "darkgreen"); //write "Hello world" in the picture
 `
 
 ###setPixel
-`setPixel(int $x, int $y, string $hexa)`
+`setPixel(int $x, int $y, string $colorName)`
 
-Draws a pixel in *(x,y)* pos in the picture. The hexadecimal color of the pixel is defined in *hexa* parameter.
+Draws a pixel in *(x,y)* pos in the picture. The hexadecimal color / color name of the pixel is defined in *colorName* parameter.
 
 ######Example
 `
-$obj->setPixel(50, 50, '#000");
+$obj->setPixel(50, 50, 'black");
 `
 
 ###setLine
-`setLine(int $x1, int $y1, int $x2, int $y2, string $hexa, int $density_pxl = 1)`
+`setLine(int $x1, int $y1, int $x2, int $y2, string $colorName, int $density_pxl = 1)`
 
-Draws a line in the picture between *(x1, y1)* and *(x2, y2)* with *density_pxl* density. *hexa* is the hexadecimal color code.
+Draws a line in the picture between *(x1, y1)* and *(x2, y2)* with *density_pxl* density. *colorName* is the hexadecimal color code or color name.
 
 ######Example
-`$obj->setLine(120, 40, 220, 40, "#abcdef");`
+`$obj->setLine(120, 40, 220, 40, "purple");`
 
 ###rotate
 `rotate(double $angle)`
@@ -101,9 +103,9 @@ This method sets a *specific* text to the picture with *size, x position, y posi
 **Note : to use this method, you must set a specific font with setFont**.
 
 ###setBorder
-`setBorder(string $hexa, int $border_pxl = 1)`
+`setBorder(string $colorName, int $border_pxl = 1)`
 
-Sets a border to the image. *hexa* parameter is the hexadecimal color of the border and *border_pxl* is the density of the border.
+Sets a border to the image. *colorName* parameter is the hexadecimal color / color name of the border and *border_pxl* is the density of the border.
 
 ######Example
 `$obj->setBorder('#000', 5); //black border with 5px density`
@@ -137,7 +139,7 @@ This method creates a thumbnail from the current image and saves it in *thumb_na
 ######Example
 `$obj->createThumbnail('img/thumb_picture'); //creates a thumbnail "thumb_picture.png" in the img folder`
 
-###show()
+###show_img()
 
 Shows the image.
 
@@ -149,7 +151,4 @@ Saves the image into *path_name*.
 ######Example
 `$obj->save('img/mypicture'); //saves the image into img/mypicture.png`
 
-###show()
-
-Shows the image.
 

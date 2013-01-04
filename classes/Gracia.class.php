@@ -23,7 +23,177 @@
  *  Gracia is a quick library to create and manage pictures with php
  *  Author: Elyas Kamel
  *  Contact: hirokoshi@gw2.fr OR melyasfa@gmail.com
+ *  @version 0.2
  */
+
+/**
+ * @desc Global variables
+ */
+
+//Defined colors
+$GColors = array(
+    'black' => array(0, 0, 0),
+    'white' => array(255, 255, 255),
+    'blue' => array(0, 0, 255),
+    'yellow' => array(255, 255, 0),
+    'gray' => array(190, 190, 190),
+    'brown' => array(165, 42, 42),
+    'red' => array(255, 0, 0),
+    'purple' => array(160, 32, 240),
+    'snow' => array(255, 250, 250),
+    'antiquewhite' => array(250, 235, 215),
+    'lightgray' => array(211, 211, 211),
+    'midnightblue' => array(25, 25, 112),
+    'royalblue' => array(65, 105, 225),
+    'steelblue' => array(70, 130, 180),
+    'lightblue' => array(173, 216, 230),
+    'turquoise' => array(64, 224, 208),
+    'cyan' => array(0, 255, 255),
+    'cadetblue' => array(95, 158, 160),
+    'darkgreen' => array(0, 100, 0),
+    'darkolivegreen' => array(85, 107, 47),
+    'greenyellow' => array(173, 255, 47),
+    'khaki' => array(240, 230, 140),
+    'gold' => array(255, 215, 0),
+    'beige' => array(245, 245, 220),
+    'orange' => array(255, 165, 0),
+    'salmon' => array(250, 128, 114),
+    'darkorange' => array(255, 140, 0),
+    'orangered' => array(255, 69, 0),
+    'pink' => array(255, 192, 203),
+    'violet' => array(238, 130, 238),
+    'darkviolet' => array(148, 0, 211)
+);
+
+
+/**
+ * @desc Exception class
+ */
+class GraciaException extends Exception {
+    
+    /**
+     * @desc Construct the exception
+     * @param string $message
+     * @param int $code
+     */
+    public function __construct($message, $code = 0) {
+        parent::__construct($message, $code);
+        header('Content-type: text/html');
+    }
+}
+
+/**
+ * @desc Color class
+ */
+class GraciaColor {
+    
+    protected $name,
+              $r,
+              $g,
+              $b;
+    
+    /**
+     * @desc construct the color
+     * @global array $GColors
+     * @param string $name
+     * @throws GraciaException
+     */
+    public function __construct($name) {
+        global $GColors;
+        
+        if(is_string($name)) {
+            //Verify if the "$name" is a hexadecimal color code
+            if(self::verifyHexa($name)) {
+                $rgb = self::hexRgb($name);
+                
+                if(in_array($rgb, $GColors)) {
+                    foreach($GColors as $key => $value) {
+                        if($rgb == $value) {
+                            $this->name = $key;
+                        }
+                    }    
+                } else $this->name = $name;
+                
+                $this->r = $rgb[0];
+                $this->g = $rgb[1];
+                $this->b = $rgb[2];          
+            } else if(preg_match("#^[a-zA-Z]#", $name)) {
+                if(self::checkColor($name)) {
+                    $this->name = $name;
+                    $this->r = $GColors[$name][0];
+                    $this->g = $GColors[$name][1];
+                    $this->b = $GColors[$name][2];
+                } else {
+                    throw new GraciaException("This color doesn't exists.");
+                }                
+            } else {
+                throw new GraciaException("Please specify a correct color value.");
+            }
+        } else {
+            throw new GraciaException("Please specify a correct color value.");
+        }
+    }
+    
+    /**
+     * @desc check if the color exists
+     * @global array $GColors
+     * @param str $name
+     * @return boolean
+     */
+    static private function checkColor($name) {
+        global $GColors;
+        
+        $name = (string) $name;
+        $ok = false;
+        
+        foreach($GColors as $key => $v) {
+            if($name == $key) {
+                $ok = true;
+            }
+        }
+        
+        return $ok;
+    }
+    
+     /**
+     * @desc Convert a hexadecimal color to RGB
+     * @param string $hex => hexadecimal color
+     * @return array => RGB
+     */
+    static private function hexRgb($hex) {
+        if($hex[0] == '#') $hex = substr($hex, 1);
+
+        if(strlen($hex) == 6) list($r, $v, $b) = array($hex[0].$hex[1], $hex[2].$hex[3], $hex[4].$hex[5]);
+        else if(strlen($hex) == 3) list($r, $v, $b) = array($hex[0].$hex[0], $hex[1].$hex[1], $hex[2].$hex[2]); 
+        else return false;
+
+        $r = hexdec($r);
+        $v = hexdec($v);
+        $b = hexdec($b);
+
+        return array($r, $v, $b);            
+    }
+    
+    /**
+     * @desc Verify if the hexa color is valid
+     * @param string $hexa => hexadecimal color
+     * @return bool
+     */
+    static private function verifyHexa($hexa) {
+        if(preg_match("/^#(([a-fA-F0-9]{3}$)|([a-fA-F0-9]{6}$))/", $hexa)) {
+            return true;
+        } else return false;
+    }
+    
+    //GETTERS
+    public function getColorName() {
+        return $this->name;
+    }
+    
+    public function getRgb() {
+        return array($this->r, $this->g, $this->b);
+    }
+}
 
 /**
  * @desc Main class
@@ -44,61 +214,33 @@ class Gracia {
             $this->y = $y;
             $this->img = imagecreate($this->x,$this->y);
             $this->name = $name;
-            return header("Content-type: image/png");
+            header("Content-type: image/png");
         } else {
-            exit('Error. The picture is not created.');
+            throw new GraciaException('Please specify correct values.');
         }
     }
     
-    /**
-     * @desc Convert a hexadecimal color to RGB
-     * @param string $hex => hexadecimal color
-     * @return array => RGB
-     */
-    static private function hexRgb($hex) {
-        if($hex[0] == '#') $hex = substr($hex, 1);
 
-        if(strlen($hex) == 6) list($r, $v, $b) = array($hex[0].$hex[1], $hex[2].$hex[3], $hex[4].$hex[5]);
-        else if(strlen($hex) == 3) list($r, $v, $b) = array($hex[0].$hex[0], $hex[1].$hex[1], $hex[2].$hex[2]); 
-        else return false;
-
-        $r = hexdec($r);
-        $v = hexdec($v);
-        $b = hexdec($b);
-
-        return array($r, $v, $b);            
-    }
-    
     /**
      * @desc Set color GD from hexadecimal color
-     * @param string $hexa => hexadecimal color
+     * @param GraciaColor $colorObj
      * @return imagecolorallocate => GD color
      */
-    private function getColorAllocate($hexa) {
-        if($this->verifyHexa($hexa)) {
-            $rgb = self::hexRgb($hexa);
-            $color = imagecolorallocate($this->img, $rgb[0], $rgb[1], $rgb[2]);
-            return $color;
-        }
+    private function getColorAllocate(GraciaColor $colorObj) {
+        $rgb = $colorObj->getRgb();
+            
+        $color = imagecolorallocate($this->img, $rgb[0], $rgb[1], $rgb[2]);
+        return $color;
     }
     
-    /**
-     * @desc Verify if the hexa color is valid
-     * @param string $hexa => hexadecimal color
-     * @return bool
-     */
-    private function verifyHexa($hexa) {
-        if(preg_match("/^#(([a-fA-F0-9]{3}$)|([a-fA-F0-9]{6}$))/", $hexa)) {
-            return true;
-        } else return false;
-    }
+
     
     /**
      * @desc Set a background to the current picture
-     * @param string $hexa => hexadecimal color
+     * @param string $colorName => hexadecimal color / color name
      */
-    final public function setBackground($hexa) {
-        $this->bgcolor = $this->getColorAllocate($hexa);
+    final public function setBackground($colorName) {
+        $this->bgcolor = $this->getColorAllocate(new GraciaColor($colorName));
     }
     
     /**
@@ -107,36 +249,31 @@ class Gracia {
      * @param int $x => x position
      * @param int $y => y position
      * @param string $text => the label of the text
-     * @param string $hexa => hexadecimal color
+     * @param string $colorName => hexadecimal color / color name
      */
-    public function setText($size, $x, $y, $text, $hexa) {
+    public function setText($size, $x, $y, $text, $colorName) {
         $size = (int) $size;
         $x = (int) $x;
         $y = (int) $y;
         $text = (string) $text;
+        $colorObj = new GraciaColor($colorName);
 
-        imagestring($this->img, $size, $x, $y, $text, $this->getColorAllocate($hexa));
+        imagestring($this->img, $size, $x, $y, $text, $this->getColorAllocate($colorObj));
     } 
     
     /**
      * @desc Draw a pixel in the x,y pos in the picture
      * @param int $x => x position
      * @param int $y => y position
-     * @param string $hexa => hexadecimal color
+     * @param string $colorName => hexadecimal color / color name
      */
-    public function setPixel($x, $y, $hexa) {
+    public function setPixel($x, $y, $colorName) {
         $x = (int) $x;
         $y = (int) $y;
-        $verifyHexa = $this->verifyHexa($hexa);
+        $colorObj = new GraciaColor($colorName);
         
-        if($verifyHexa) {
-            $color = $this->getColorAllocate($hexa);
-            imagesetpixel($this->img, $x, $y, $color);
-        } else {
-            header("Content-type: text/html");
-            return exit("Your hexadecimal color is incorrect.");
-        }
-        
+        $color = $this->getColorAllocate($colorObj);
+        imagesetpixel($this->img, $x, $y, $color);  
     }
     
     /**
@@ -145,24 +282,20 @@ class Gracia {
      * @param int $y1
      * @param int $x2
      * @param int $y2
-     * @param string $hexa => hexadecimal color
+     * @param string $colorName => hexadecimal color / color name
      * @param string $density_pxl => the density of the line
      */
-    public function setLine($x1, $y1, $x2, $y2, $hexa, $density_pxl = 1) {
+    public function setLine($x1, $y1, $x2, $y2, $colorName, $density_pxl = 1) {
         $x1 = (int) $x1;
         $x2 = (int) $x2;
         $y1 =(int) $y1;
         $y2 = (int) $y2;
         
-        if($this->verifyHexa($hexa)) {
-            $color = $this->getColorAllocate($hexa);
+        $colorObj = new GraciaColor($colorName);
+        $color = $this->getColorAllocate($colorObj);
             
-            for($i = 0; $i < $density_pxl; $i++) {
-                imageline($this->img, $x1, $y1 + $i, $x2, $y2 + $i, $color);
-            }
-        } else {
-            header("Content-type: text/html");
-            return exit("Your hexadecimal color is incorrect.");            
+        for($i = 0; $i < $density_pxl; $i++) {
+            imageline($this->img, $x1, $y1 + $i, $x2, $y2 + $i, $color);
         }
     } 
     
@@ -190,10 +323,8 @@ class Gracia {
     public function setFont($path) {
         if(file_exists($path))
             $this->font_path = $path;
-        else {
-            header("Content-type: text/html");
-            return exit('Erreur. The file can not be opened.');
-        }
+        else 
+            throw new GraciaException("The font file can not be opened. Verify the path.");
     }
     
     /**
@@ -203,44 +334,42 @@ class Gracia {
      * @param int $x => x pos
      * @param int $y => y pos
      * @param string $text => the label of the text
-     * @param string $hexa => hexadecimal color
+     * @param string $colorName => hexadecimal color / color name
      */
-    public function setTtfText($size, $x, $y, $text, $hexa) {  
+    public function setTtfText($size, $x, $y, $text, $colorName) {  
         if(!empty($this->font_path)) {
             $size = (int) $size;
             $x = (int) $x;
             $y = (int) $y;
             $text = (string) $text;
 
-            imagettftext($this->img, $size, 0, $x, $y, $this->getColorAllocate($hexa), $this->font_path, $text);
+            imagettftext($this->img, $size, 0, $x, $y, $this->getColorAllocate(new GraciaColor($colorName)), $this->font_path, $text);
         } else  {
-            header("Content-type: text/html");
-            exit('Specify your font with <strong>setFont</strong> to use this method.');
+            throw new GraciaException("Specify your font with setFont to use this method.");            
         }
     }
     
     /**
      * @desc Set a border to the picture
-     * @param string $hexa
+     * @param string $colorName => hexadecimal color / color name
      * @param int $border_pxl => the density of the border
      */
-    public function setBorder($hexa, $border_pxl = 1) {
-        if($this->verifyHexa($hexa)) {
-            $color = $this->getColorAllocate($hexa);
-            $border_pxl = (int) $border_pxl;
+    public function setBorder($colorName, $border_pxl = 1) {
+        $colorObj = new GraciaColor($colorName);
+        $color = $this->getColorAllocate($colorObj);
+        $border_pxl = (int) $border_pxl;
             
-            $weight = $this->x - 1;
-            $height = $this->y - 1;
-            $x = 0;
-            $y = 0;
+        $weight = $this->x - 1;
+        $height = $this->y - 1;
+        $x = 0;
+        $y = 0;
             
-            for($i = 0; $i < $border_pxl; $i++) {
-                imageline($this->img, $x + $i, $y + $i, $x + $i, $y + $height + $i, $color);
-                imageline($this->img, $x + $i, $y + $i, $x + $weight + $i, $y + $i, $color);
-                imageline($this->img, $x + $weight - $i, $y - $i, $x + $weight - $i, $y + $height - $i, $color);
-                imageline($this->img, $x - $i, $y + $height - $i, $x + $weight - $i, $y + $height - $i, $color);                   
-            }      
-        }
+        for($i = 0; $i < $border_pxl; $i++) {
+            imageline($this->img, $x + $i, $y + $i, $x + $i, $y + $height + $i, $color);
+            imageline($this->img, $x + $i, $y + $i, $x + $weight + $i, $y + $i, $color);
+            imageline($this->img, $x + $weight - $i, $y - $i, $x + $weight - $i, $y + $height - $i, $color);
+            imageline($this->img, $x - $i, $y + $height - $i, $x + $weight - $i, $y + $height - $i, $color);                   
+        }      
     }
     
     /**
@@ -280,15 +409,13 @@ class Gracia {
                     $src = imagecreatefromjpeg($file_path);
                     break;
                 default;
-                    header("Content-type: text/html");
-                    exit('The target picture must be a picture.');
+                    throw new GraciaException("The target must be a picture.");            
             }
             $w_source = imagesx($src);
             $h_source = imagesy($src);
             imagecopymerge($this->img, $src, $x, $y, 0, 0, $w_source, $h_source, $op);
         } else {
-            header("Content-type: text/html");
-            exit('Error. Can not open the target picture.');
+            throw new GraciaException("Can not open the target picture. Please specify a valid file path.");            
         }
     }
     
@@ -336,7 +463,6 @@ class Gracia {
     //GETTERS\\
     public function getName() {
         return $this->name;
-    }
-    
+    }   
 }
 ?>
