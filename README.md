@@ -4,7 +4,7 @@ Gracia is a quick library to create and manage pictures with php.
 
 This library can be used only to create or manage **empty** pictures. GraciaJPG and GraciaPNG are coming soon :-).
 
-**Last stable version : 0.2**
+**Last stable version : 0.2.1**
 
 License
 ----------
@@ -109,6 +109,15 @@ Sets a border to the image. *colorName* parameter is the hexadecimal color / col
 
 ######Example
 `$obj->setBorder('#000', 5); //black border with 5px density`
+
+###drawRightTriangle
+`drawRightTriangle(int $adjacent_side, int $opposite_side, int $x, int $y, string $colorName, int $density = 1)`
+
+Draws a right triangle.
+
+######Example
+`$obj->setBorder('#000', 5); //black border with 5px density`
+
 
 ###fusion
 `fusion(string $file_path, int $x, int $y, int $op)`
