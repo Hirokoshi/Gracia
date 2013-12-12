@@ -275,15 +275,15 @@ class Gracia {
         $color = $this->getColorAllocate($colorObj);
         imagesetpixel($this->img, $x, $y, $color);  
     }
-    
+
     /**
-     * @desc Draw a ligne in the current picture
-     * @param int $x1
-     * @param int $y1
-     * @param int $x2
-     * @param int $y2
-     * @param string $colorName => hexadecimal color / color name
-     * @param string $density_pxl => the density of the line
+     * @desc Draw a line in the current picture
+     * @param $x1
+     * @param $y1
+     * @param $x2
+     * @param $y2
+     * @param string $colorName
+     * @param int $density_pxl
      */
     public function setLine($x1, $y1, $x2, $y2, $colorName, $density_pxl = 1) {
         $x1 = (int) $x1;
@@ -297,7 +297,31 @@ class Gracia {
         for($i = 0; $i < $density_pxl; $i++) {
             imageline($this->img, $x1, $y1 + $i, $x2, $y2 + $i, $color);
         }
-    } 
+    }
+
+    /**
+     * @param $adjacent_side
+     * @param $opposite_side
+     * @param $x
+     * @param $y
+     * @param $colorName
+     * @param int $density
+     */
+    public function drawRightTriangle($adjacent_side, $opposite_side, $x, $y, $colorName, $density = 1) {
+        $x = (int) $x;
+        $y = (int) $y;
+
+        $adjacent_side = intval($adjacent_side);
+        $opposite_side = intval($opposite_side);
+
+        $color = $this->getColorAllocate(new GraciaColor($colorName));
+
+        for($i = 0; $i < $density; $i++) {
+            imageline($this->img, $x, $y + $i, $x + $adjacent_side + $i, $y + $i, $color);
+            imageline($this->img, ($x + $adjacent_side) + $i, ($y - $opposite_side), ($x + $adjacent_side) + $i, $y + $i, $color);
+            imageline($this->img, $x, $y + $i, $x + $adjacent_side, ($y - $opposite_side) + $i, $color);
+        }
+    }
     
     /**
      * @desc Rotate the picture
