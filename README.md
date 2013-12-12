@@ -116,7 +116,7 @@ Sets a border to the image. *colorName* parameter is the hexadecimal color / col
 Draws a right triangle.
 
 ######Example
-`$obj->setBorder('#000', 5); //black border with 5px density`
+`$obj->drawRightTriangle(125, 125, 150, 140, 'black', 3); //draws a black right triangle`
 
 
 ###fusion
