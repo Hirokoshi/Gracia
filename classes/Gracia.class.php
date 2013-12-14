@@ -23,7 +23,7 @@
  *  Gracia is a quick library to create and manage pictures with php
  *  Author: Elyas Kamel
  *  Contact: hirokoshi@gw2.fr OR melyasfa@gmail.com
- *  @version 0.2
+ *  @version 0.2.2
  */
 
 /**
@@ -332,7 +332,56 @@ class Gracia {
         
         $this->img = imagerotate($this->img, $angle, 0);
     }
-    
+
+    /**
+     * @desc Pixelise the image
+     */
+    public function pixelise() {
+        imagefilter($this->img, IMG_FILTER_PIXELATE, IMG_FILTER_CONTRAST, IMG_FILTER_PIXELATE);
+    }
+
+    /**
+     * @desc Reverse the colors of the image
+     */
+    public function negate() {
+        imagefilter($this->img, IMG_FILTER_NEGATE);
+    }
+
+    /**
+     * @desc Modify the contrast of the image
+     * @param int $contrast
+     * @throws GraciaException
+     */
+    public function setContrast($contrast = 1) {
+        if($contrast >= 1 && $contrast <= 100)
+            imagefilter($this->img, IMG_FILTER_CONTRAST, $contrast);
+        else throw new GraciaException("The contrast must be a value between 1 and 100.");
+    }
+
+    /**
+     * @desc Applies "colorize" filter to the image
+     * @param string $colorName
+     * @param int $alpha
+     */
+    public function colorize($colorName, $alpha) {
+        $alpha = (int) $alpha;
+
+        $color = new GraciaColor($colorName);
+        $rgb = $color->getRgb();
+
+        imagefilter($this->img, IMG_FILTER_COLORIZE, $rgb[0], $rgb[1], $rgb[2], $alpha);
+    }
+
+    /**
+     * @desc Makes the image smoother
+     * @param double $smooth_level
+     */
+    public function smooth($smooth_level) {
+        $smooth_level = (double) $smooth_level;
+
+        imagefilter($this->img, IMG_FILTER_SMOOTH, $smooth_level);
+    }
+
     /**
      * @desc Set the picture transparent
      */
