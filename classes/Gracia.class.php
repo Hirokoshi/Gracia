@@ -200,20 +200,17 @@ class GraciaColor {
  */
 class Gracia {
     protected $img, $name, $x, $y, $bgcolor, $font_path;
-    
-    /**
-     * @desc Construct the object
-     * @param string $name => the name of the picture
-     * @param int $x => picture width
-     * @param int $y => picture height
-     * @return the picture
-     */
-    public function __construct($name, $x, $y) {
+
+    public function __construct($name, $x, $y, $bgcolor = null) {
         if(is_string($name) && is_int($x) && is_int($y)) {
             $this->x = $x;
             $this->y = $y;
             $this->img = imagecreate($this->x,$this->y);
             $this->name = $name;
+
+            if($bgcolor !== null)
+                $this->bgcolor = $this->getColorAllocate(new GraciaColor($bgcolor));
+
             header("Content-type: image/png");
         } else {
             throw new GraciaException('Please specify correct values.');
