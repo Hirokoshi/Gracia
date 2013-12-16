@@ -23,7 +23,7 @@
  *  Gracia is a quick library to create and manage pictures with php
  *  Author: Elyas Kamel
  *  Contact: hirokoshi@gw2.fr OR melyasfa@gmail.com
- *  @version 0.2.2
+ *  @version 0.2.3
  */
 
 /**
@@ -285,12 +285,12 @@ class Gracia {
     public function setLine($x1, $y1, $x2, $y2, $colorName, $density_pxl = 1) {
         $x1 = (int) $x1;
         $x2 = (int) $x2;
-        $y1 =(int) $y1;
+        $y1 = (int) $y1;
         $y2 = (int) $y2;
-        
+
         $colorObj = new GraciaColor($colorName);
         $color = $this->getColorAllocate($colorObj);
-            
+
         for($i = 0; $i < $density_pxl; $i++) {
             imageline($this->img, $x1, $y1 + $i, $x2, $y2 + $i, $color);
         }
@@ -317,6 +317,35 @@ class Gracia {
             imageline($this->img, $x, $y + $i, $x + $adjacent_side + $i, $y + $i, $color);
             imageline($this->img, ($x + $adjacent_side) + $i, ($y - $opposite_side), ($x + $adjacent_side) + $i, $y + $i, $color);
             imageline($this->img, $x, $y + $i, $x + $adjacent_side, ($y - $opposite_side) + $i, $color);
+        }
+    }
+
+    /**
+     * @desc Draws a polygon
+     * @param array $vals
+     * @param int $density
+     * @param string $colorName
+     */
+    public function drawPolygon($vals, $colorName, $density = 2) {
+        $density = (int) $density;
+
+        $count = count($vals);
+        if($count > 2) {
+            for($i = 0; $i < $count - 1; $i++) {
+                $x1 = $vals[$i][0];
+                $y1 = $vals[$i][1];
+                $x2 = $vals[$i + 1][0];
+                $y2 = $vals[$i + 1][1];
+
+                $this->setLine($x1, $y1, $x2, $y2, $colorName, $density);
+            }
+
+            $x1 = $vals[$count - 1][0];
+            $y1 = $vals[$count - 1][1];
+            $x2 = $vals[0][0];
+            $y2 = $vals[0][1];
+
+            $this->setLine($x1, $y1, $x2, $y2, $colorName, $density);
         }
     }
     
