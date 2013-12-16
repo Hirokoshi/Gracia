@@ -23,7 +23,7 @@
  *  Gracia is a quick library to create and manage pictures with php
  *  Author: Elyas Kamel
  *  Contact: hirokoshi@gw2.fr OR melyasfa@gmail.com
- *  @version 0.2.3
+ *  @version 0.2.5
  */
 
 /**
@@ -414,10 +414,10 @@ class Gracia {
     public function setTransparent() {
         imagecolortransparent($this->img, $this->bgcolor);
     }
-    
+
     /**
-     * @desc set a font to the text
-     * @param string $path => the path of the font file
+     * @param string $path
+     * @throws GraciaException
      */
     public function setFont($path) {
         if(file_exists($path))
@@ -425,15 +425,15 @@ class Gracia {
         else 
             throw new GraciaException("The font file can not be opened. Verify the path.");
     }
-    
+
     /**
-     * @desc set a text using a specific font
      * @desc To use this method, the user must set a font with setFont();
-     * @param string $size => text size
-     * @param int $x => x pos
-     * @param int $y => y pos
-     * @param string $text => the label of the text
-     * @param string $colorName => hexadecimal color / color name
+     * @param int $size
+     * @param int $x
+     * @param int $y
+     * @param string $text
+     * @param string $colorName
+     * @throws GraciaException
      */
     public function setTtfText($size, $x, $y, $text, $colorName) {  
         if(!empty($this->font_path)) {
@@ -477,11 +477,9 @@ class Gracia {
     public function show_img() {
         imagepng($this->img);
     }
-    
+
     /**
-     * @desc Save the picture
-     * @param string $path => the path where the picture will be saved
-     * @example save('img/name');
+     * @param string $path_name
      */
     public function save($path_name) {
         imagepng($this->img, $path_name.'.png');
@@ -494,7 +492,16 @@ class Gracia {
      * @param int $y => the y pos
      * @param int $op => opacity
      */
-    public function fusion($file_path, $x, $y, $op) {
+
+    /**
+     * @desc Merge the image with another image
+     * @param string $file_path
+     * @param int $x
+     * @param int $y
+     * @param int $opacity
+     * @throws GraciaException
+     */
+    public function fusion($file_path, $x, $y, $opacity) {
         if(file_exists($file_path)) {
             $extension = explode('.', $file_path);
             switch($extension[1]) {
@@ -512,7 +519,7 @@ class Gracia {
             }
             $w_source = imagesx($src);
             $h_source = imagesy($src);
-            imagecopymerge($this->img, $src, $x, $y, 0, 0, $w_source, $h_source, $op);
+            imagecopymerge($this->img, $src, $x, $y, 0, 0, $w_source, $h_source, $opacity);
         } else {
             throw new GraciaException("Can not open the target picture. Please specify a valid file path.");            
         }
@@ -564,4 +571,3 @@ class Gracia {
         return $this->name;
     }   
 }
-?>
