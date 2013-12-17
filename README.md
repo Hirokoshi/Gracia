@@ -63,11 +63,13 @@ Draws a right triangle.
 Draws a polygon. The parameter *vals* is an array which determines the coordinates of the polygon.
 
 ######Example
-`$coords = array(
+`
+$coords = array(
      array(20, 100), array(100, 100), array(20, 30), array(100, 30)
  );
 
- $obj->drawPolygon($coords, 'black', 2);`
+ $obj->drawPolygon($coords, 'black', 2);
+`
 
 
 ###fusion
@@ -207,33 +209,63 @@ Colors legend
 There are some colors predefined in Gracia. Here's the list with RGB format :
 
 *black*         => 0-0-0
+
 *white*         => 255-255-255
+
 *blue*          => 0-0-255
+
 *yellow*        => 255-255-0
+
 *gray*          => 190-190-190
+
 *brown*         => 165-42-42
+
 *red*           => 255-0-0
+
 *purple*        => 160-32-240
+
 *snow*          => 255-250-255
+
 *antiquewhite*  => 250-235-215
+
 *lightgray*     => 211-211-211
+
 *midnightblue*  => 25-25-112
+
 *royalblue*     => 65-105-225
+
 *steelblue*     => 70-130-180
+
 *lightblue*     => 173-216-230
+
 *turquoise*     => 64-224-208
+
 *cyan*          => 0-255-255
+
 *cadetblue*     => 95-158-160
+
 *darkgreen*     => 0-100-0
+
 *darkolivegreen*=> 85-107-47
+
 *greenyellow*   => 173-255-47
+
 *khaki*         => 240-230-140
+
 *gold*          => 255-215-0
+
 *beige*         => 245-245-220
+
 *orange*        => 255-165-0
+
 *salmon*        => 250-128-114
+
 *darkorange*    => 255-140-0
+
 *orangered*     => 255-69-0
+
 *pink*          => 255-192-203
+
 *violet*        => 238-130-238
+
 *darkviolet*    => 148-0-211
