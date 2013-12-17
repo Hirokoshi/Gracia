@@ -63,13 +63,13 @@ Draws a right triangle.
 Draws a polygon. The parameter *vals* is an array which determines the coordinates of the polygon.
 
 ######Example
-`
-$coords = array(
-     array(20, 100), array(100, 100), array(20, 30), array(100, 30)
- );
 
- $obj->drawPolygon($coords, 'black', 2);
-`
+    $coords = array(
+        array(20, 100), array(100, 100), array(20, 30), array(100, 30)
+    );
+
+    $obj->drawPolygon($coords, 'black', 2);
+
 
 
 ###fusion
