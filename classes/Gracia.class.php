@@ -23,7 +23,7 @@
  *  Gracia is a quick library to create and manage pictures with php
  *  Author: Elyas Kamel
  *  Contact: hirokoshi@gw2.fr OR melyasfa@gmail.com
- *  @version 0.2.5
+ *  @version 0.2.6
  */
 
 /**
@@ -282,7 +282,7 @@ class Gracia {
      * @param string $colorName
      * @param int $density_pxl
      */
-    public function setLine($x1, $y1, $x2, $y2, $colorName, $density_pxl = 1) {
+    public function setLine($x1, $y1, $x2, $y2, $colorName, $density_pxl = 1, $style = 'solid') {
         $x1 = (int) $x1;
         $x2 = (int) $x2;
         $y1 = (int) $y1;
@@ -291,8 +291,80 @@ class Gracia {
         $colorObj = new GraciaColor($colorName);
         $color = $this->getColorAllocate($colorObj);
 
-        for($i = 0; $i < $density_pxl; $i++) {
-            imageline($this->img, $x1, $y1 + $i, $x2, $y2 + $i, $color);
+        $distance = $this->lineDistance($x1, $y1, $x2, $y2);
+        $this->getLineVars($i1, $i2, $nb, $i, $style, $density_pxl, $distance);
+
+        switch($style) {
+            case 'solid':
+                for($i = 0; $i < $density_pxl; $i++) {
+                    imageline($this->img, $x1, $y1 + $i, $x2, $y2 + $i, $color);
+                }
+                break;
+            case 'dotted':
+                if($i > 1) {
+                    if($x1 != $x2) {
+                        $m = ($y2 - $y1) / ($x2 - $x1);
+
+                        for($j = 0; $j < $i; $j++) {
+                            $x = $x1 + $j * ($x2 - $x1) / ($i - 1);
+                            $y = $m * $x + $y1 - $m * $x1;
+
+                            imagefilledellipse($this->img, $x, $y, $density_pxl, $density_pxl, $color);
+                        }
+                    } else {
+                        for($j = 0; $j < $i; $j++) {
+                            $y = $y1 + $j * - ($y2 - $y1) / ($i - 1);
+
+                            imagefilledellipse($this->img, $x1, $y, $density_pxl, $density_pxl, $color);
+                        }
+                    }
+                } else {
+                    for($i = 0; $i < $density_pxl; $i++) {
+                        imageline($this->img, $x1, $y1 + $i, $x2, $y2 + $i, $color);
+                    }
+                }
+                break;
+
+        }
+    }
+
+    /**
+     * @desc Return the distance between two points
+     * @param int $x1
+     * @param int $y1
+     * @param int $x2
+     * @param int $y2
+     * @return float
+     */
+    private function lineDistance($x1, $y1, $x2, $y2) {
+        return sqrt(pow(($x2 - $x1), 2) + pow(($y2 - $y1), 2));
+    }
+
+    /**
+     * @desc Getting differents variables for line styles
+     * @param int $i1
+     * @param int $i2
+     * @param int $nb
+     * @param int $i
+     * @param string $style
+     * @param int $density
+     * @param double/float $dist
+     */
+    private function getLineVars(& $i1, & $i2, & $nb, & $i, $style, $density, $dist) {
+        switch($style) {
+            case 'dotted':
+                $i1 = 1;
+                $i2 = 1;
+                break;
+        }
+
+        //Delimit var
+        $nb = ceil($dist / $density);
+
+        $i = floor(($nb + $i2) / ($i1 + $i2));
+
+        if($i > 1) {
+            $i2 = ($nb - $i * $i1)/($i - 1);
         }
     }
 
@@ -484,14 +556,6 @@ class Gracia {
     public function save($path_name) {
         imagepng($this->img, $path_name.'.png');
     }
-    
-    /**
-     * @desc Merge the picture with another picture
-     * @param string $file_path => other picture target
-     * @param int $x => the x pos of the fusion
-     * @param int $y => the y pos
-     * @param int $op => opacity
-     */
 
     /**
      * @desc Merge the image with another image

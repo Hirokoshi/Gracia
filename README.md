@@ -148,9 +148,9 @@ Sets a special font to the text.
 `$obj->setFont('fonts/myfont.ttf');`
 
 ###setLine
-`setLine(int $x1, int $y1, int $x2, int $y2, string $colorName, int $density_pxl = 1)`
+`setLine(int $x1, int $y1, int $x2, int $y2, string $colorName, int $density_pxl = 1, string $style)`
 
-Draws a line in the picture between *(x1, y1)* and *(x2, y2)* with *density_pxl* density. *colorName* is the hexadecimal color code or color name.
+Draws a line in the picture between *(x1, y1)* and *(x2, y2)* with *density_pxl* density and *style* style (dotted, solid). *colorName* is the hexadecimal color code or color name.
 
 ######Example
 `$obj->setLine(120, 40, 220, 40, "purple");`
