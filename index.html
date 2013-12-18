@@ -1,0 +1,406 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Gracia by Hirokoshi</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/Hirokoshi/Gracia">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/Hirokoshi/Gracia/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/Hirokoshi/Gracia/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Gracia</h1>
+          <p></p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/Hirokoshi">Hirokoshi</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h2>
+<a name="gracia" class="anchor" href="#gracia"><span class="octicon octicon-link"></span></a>Gracia</h2>
+
+<p>Gracia is a quick library to create and manage images with php.</p>
+
+<p>This library can be used only to create or manage <strong>empty</strong> images. GraciaJPG and GraciaPNG are coming soon :-).</p>
+
+<p><strong>Last stable version : 0.2.7</strong></p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Author : Elyas Kamel (Hirokoshi)</p>
+
+<p>Contact : <a href="mailto:hirokoshi@gw2.fr">hirokoshi@gw2.fr</a> - <a href="mailto:melyasfa@gmail.com">melyasfa@gmail.com</a></p>
+
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License
+along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+
+<h2>
+<a name="doc" class="anchor" href="#doc"><span class="octicon octicon-link"></span></a>Doc</h2>
+
+<h3>
+<a name="constructor" class="anchor" href="#constructor"><span class="octicon octicon-link"></span></a>Constructor</h3>
+
+<p><code>__construct(string $name, int $x, int, string $bgcolor = null)</code></p>
+
+<p>The constructor creates an empty picture with a <em>name</em>, <em>x</em> width and <em>y</em> height. The <em>bgcolor</em> parameter is optionnal.</p>
+
+<h6>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj = new Gracia("myPicture", 350, 150, "#7F7F7F");</code></p>
+
+<h3>
+<a name="colorize" class="anchor" href="#colorize"><span class="octicon octicon-link"></span></a>colorize</h3>
+
+<p><code>colorize(string $colorName, int alpha)</code></p>
+
+<p>Applies the "colorize" filter to the image.</p>
+
+<h3>
+<a name="createthumbnail" class="anchor" href="#createthumbnail"><span class="octicon octicon-link"></span></a>createThumbnail</h3>
+
+<p><code>createThumbnail(string $thumb_name);</code></p>
+
+<p>This method creates a thumbnail from the current image and saves it in <em>thumb_name</em>. The thumbnail's proportions are calculated automatically.</p>
+
+<h6>
+<a name="example-1" class="anchor" href="#example-1"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;createThumbnail('img/thumb_picture'); //creates a thumbnail "thumb_picture.png" in the img folder</code></p>
+
+<h3>
+<a name="drawrighttriangle" class="anchor" href="#drawrighttriangle"><span class="octicon octicon-link"></span></a>drawRightTriangle</h3>
+
+<p><code>drawRightTriangle(int $adjacent_side, int $opposite_side, int $x, int $y, string $colorName, int $density = 1)</code></p>
+
+<p>Draws a right triangle.</p>
+
+<h6>
+<a name="example-2" class="anchor" href="#example-2"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;drawRightTriangle(125, 125, 150, 140, 'black', 3); //draws a black right triangle</code></p>
+
+<h3>
+<a name="drawpolygon" class="anchor" href="#drawpolygon"><span class="octicon octicon-link"></span></a>drawPolygon</h3>
+
+<p><code>drawPolygon(array $vals, string $colorName, int $density = 2)</code></p>
+
+<p>Draws a polygon. The parameter <em>vals</em> is an array which determines the coordinates of the polygon.</p>
+
+<h6>
+<a name="example-3" class="anchor" href="#example-3"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<pre><code>$coords = array(
+    array(20, 100), array(100, 100), array(20, 30), array(100, 30)
+);
+
+$obj-&gt;drawPolygon($coords, 'black', 2);
+</code></pre>
+
+<h3>
+<a name="fusion" class="anchor" href="#fusion"><span class="octicon octicon-link"></span></a>fusion</h3>
+
+<p><code>fusion(string $file_path, int $x, int $y, int $op)</code></p>
+
+<p>This method merges the current picture with another image. <em>file_path</em> is the path of the target image, <em>(x,y)</em> is the merge position and <em>op</em> is the opacity of the target image.</p>
+
+<h6>
+<a name="example-4" class="anchor" href="#example-4"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;fusion('img/anotherpicture.jpg', 30, 50, 50); //merge the current img with anotherpicture.png with 50% opacity</code></p>
+
+<h3>
+<a name="negate" class="anchor" href="#negate"><span class="octicon octicon-link"></span></a>negate</h3>
+
+<p><code>negate()</code></p>
+
+<p>Reverse the colors of the image.</p>
+
+<h3>
+<a name="pixelise" class="anchor" href="#pixelise"><span class="octicon octicon-link"></span></a>pixelise</h3>
+
+<p><code>pixelise()</code></p>
+
+<p>Pixelise the image.</p>
+
+<h3>
+<a name="resize" class="anchor" href="#resize"><span class="octicon octicon-link"></span></a>resize</h3>
+
+<p><code>resize(int $w, $int $h)</code></p>
+
+<p>This method resizes the current image. <em>w</em> is the new width and <em>h</em> is the new height.</p>
+
+<h6>
+<a name="example-5" class="anchor" href="#example-5"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;resize(300, 100);</code></p>
+
+<h3>
+<a name="rotate" class="anchor" href="#rotate"><span class="octicon octicon-link"></span></a>rotate</h3>
+
+<p><code>rotate(double $angle)</code></p>
+
+<p>Rotate the picture using <em>angle</em> parameter in degrees.</p>
+
+<h6>
+<a name="example-6" class="anchor" href="#example-6"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;rotate(180);</code></p>
+
+<h3>
+<a name="save" class="anchor" href="#save"><span class="octicon octicon-link"></span></a>save</h3>
+
+<p><code>save(string $path_name)</code></p>
+
+<p>Saves the image into <em>path_name</em>.</p>
+
+<h6>
+<a name="example-7" class="anchor" href="#example-7"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;save('img/mypicture'); //saves the image into img/mypicture.png</code></p>
+
+<h3>
+<a name="setbackground" class="anchor" href="#setbackground"><span class="octicon octicon-link"></span></a>setBackground</h3>
+
+<p><code>setBackground(string $colorName)</code></p>
+
+<p>This method sets a background to the picture. The hexadecimal color code / color name of the background is defined in <em>colorName</em> parameter.</p>
+
+<h6>
+<a name="example-8" class="anchor" href="#example-8"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>
+$obj-&gt;setBackground("yellow"); //sets a black background to the picture
+</code></p>
+
+<h3>
+<a name="setborder" class="anchor" href="#setborder"><span class="octicon octicon-link"></span></a>setBorder</h3>
+
+<p><code>setBorder(string $colorName, int $border_pxl = 1)</code></p>
+
+<p>Sets a border to the image. <em>colorName</em> parameter is the hexadecimal color / color name of the border and <em>border_pxl</em> is the density of the border.</p>
+
+<h6>
+<a name="example-9" class="anchor" href="#example-9"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;setBorder('#000', 5); //black border with 5px density</code></p>
+
+<h3>
+<a name="setcontrast" class="anchor" href="#setcontrast"><span class="octicon octicon-link"></span></a>setContrast</h3>
+
+<p><code>setContrast(int $constrast = 1)</code></p>
+
+<p>Modify the contrast of the image. The value of the contrast must be between 1 and 100.</p>
+
+<h6>
+<a name="example-10" class="anchor" href="#example-10"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;setContrast(56);</code></p>
+
+<h3>
+<a name="setfont" class="anchor" href="#setfont"><span class="octicon octicon-link"></span></a>setFont</h3>
+
+<p><code>setFont(string $path)</code></p>
+
+<p>Sets a special font to the text.</p>
+
+<h6>
+<a name="example-11" class="anchor" href="#example-11"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;setFont('fonts/myfont.ttf');</code></p>
+
+<h3>
+<a name="setline" class="anchor" href="#setline"><span class="octicon octicon-link"></span></a>setLine</h3>
+
+<p><code>setLine(int $x1, int $y1, int $x2, int $y2, string $colorName, int $density_pxl = 1, string $style)</code></p>
+
+<p>Draws a line in the picture between <em>(x1, y1)</em> and <em>(x2, y2)</em> with <em>density_pxl</em> density and <em>style</em> style (dotted, solid). <em>colorName</em> is the hexadecimal color code or color name.</p>
+
+<h6>
+<a name="example-12" class="anchor" href="#example-12"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;setLine(120, 40, 220, 40, "purple");</code></p>
+
+<h3>
+<a name="setname" class="anchor" href="#setname"><span class="octicon octicon-link"></span></a>setName</h3>
+
+<p><code>setName(string $new_name)</code></p>
+
+<p>Sets a new name to the picture.</p>
+
+<h3>
+<a name="setpixel" class="anchor" href="#setpixel"><span class="octicon octicon-link"></span></a>setPixel</h3>
+
+<p><code>setPixel(int $x, int $y, string $colorName)</code></p>
+
+<p>Draws a pixel in <em>(x,y)</em> pos in the picture. The hexadecimal color / color name of the pixel is defined in <em>colorName</em> parameter.</p>
+
+<h6>
+<a name="example-13" class="anchor" href="#example-13"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>
+$obj-&gt;setPixel(50, 50, 'black");
+</code></p>
+
+<h3>
+<a name="settext" class="anchor" href="#settext"><span class="octicon octicon-link"></span></a>setText</h3>
+
+<p><code>setText(int $size, int $x, int $y, string $text, string $colorName)</code></p>
+
+<p>This method sets a text to the picture with <em>size, x position, y position, the label of the text and the hexadecimal code or color name</em>.</p>
+
+<h6>
+<a name="example-14" class="anchor" href="#example-14"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>
+$obj-&gt;setText(14, 120, 30, "Hello world!", "darkgreen"); //write "Hello world" in the picture
+</code></p>
+
+<h5>
+<a name="settransparent" class="anchor" href="#settransparent"><span class="octicon octicon-link"></span></a>setTransparent</h5>
+
+<p><code>setTransparent()</code></p>
+
+<p>Sets the picture transparent.</p>
+
+<h3>
+<a name="setttftext" class="anchor" href="#setttftext"><span class="octicon octicon-link"></span></a>setTtfText</h3>
+
+<p><code>setTtfText(int $size, int $x, int $y, string $text, string $colorName)</code></p>
+
+<p>This method sets a <em>specific</em> text to the picture with *size, x position, y position, the label of the text and the color name.</p>
+
+<p><strong>Note : to use this method, you must set a specific font with setFont</strong>.</p>
+
+<h3>
+<a name="show_img" class="anchor" href="#show_img"><span class="octicon octicon-link"></span></a>show_img</h3>
+
+<p>Shows the image.</p>
+
+<h3>
+<a name="smooth" class="anchor" href="#smooth"><span class="octicon octicon-link"></span></a>smooth</h3>
+
+<p><code>smooth(double $smooth_level)</code></p>
+
+<p>Makes the image smoother.</p>
+
+<h6>
+<a name="example-15" class="anchor" href="#example-15"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<p><code>$obj-&gt;smooth(56)</code></p>
+
+<h2>
+<a name="styles" class="anchor" href="#styles"><span class="octicon octicon-link"></span></a>Styles</h2>
+
+<p>The following styles can be used only with setLine method <strong>for the moment</strong> :</p>
+
+<ul>
+<li><p>solid</p></li>
+<li><p>dotted</p></li>
+<li><p>double</p></li>
+</ul><h2>
+<a name="colors-legend" class="anchor" href="#colors-legend"><span class="octicon octicon-link"></span></a>Colors legend</h2>
+
+<p>There are some colors predefined in Gracia. Here's the list with RGB format :</p>
+
+<p><em>black</em>         =&gt; 0-0-0</p>
+
+<p><em>white</em>         =&gt; 255-255-255</p>
+
+<p><em>blue</em>          =&gt; 0-0-255</p>
+
+<p><em>yellow</em>        =&gt; 255-255-0</p>
+
+<p><em>gray</em>          =&gt; 190-190-190</p>
+
+<p><em>brown</em>         =&gt; 165-42-42</p>
+
+<p><em>red</em>           =&gt; 255-0-0</p>
+
+<p><em>purple</em>        =&gt; 160-32-240</p>
+
+<p><em>snow</em>          =&gt; 255-250-255</p>
+
+<p><em>antiquewhite</em>  =&gt; 250-235-215</p>
+
+<p><em>lightgray</em>     =&gt; 211-211-211</p>
+
+<p><em>midnightblue</em>  =&gt; 25-25-112</p>
+
+<p><em>royalblue</em>     =&gt; 65-105-225</p>
+
+<p><em>steelblue</em>     =&gt; 70-130-180</p>
+
+<p><em>lightblue</em>     =&gt; 173-216-230</p>
+
+<p><em>turquoise</em>     =&gt; 64-224-208</p>
+
+<p><em>cyan</em>          =&gt; 0-255-255</p>
+
+<p><em>cadetblue</em>     =&gt; 95-158-160</p>
+
+<p><em>darkgreen</em>     =&gt; 0-100-0</p>
+
+<p><em>darkolivegreen</em>=&gt; 85-107-47</p>
+
+<p><em>greenyellow</em>   =&gt; 173-255-47</p>
+
+<p><em>khaki</em>         =&gt; 240-230-140</p>
+
+<p><em>gold</em>          =&gt; 255-215-0</p>
+
+<p><em>beige</em>         =&gt; 245-245-220</p>
+
+<p><em>orange</em>        =&gt; 255-165-0</p>
+
+<p><em>salmon</em>        =&gt; 250-128-114</p>
+
+<p><em>darkorange</em>    =&gt; 255-140-0</p>
+
+<p><em>orangered</em>     =&gt; 255-69-0</p>
+
+<p><em>pink</em>          =&gt; 255-192-203</p>
+
+<p><em>violet</em>        =&gt; 238-130-238</p>
+
+<p><em>darkviolet</em>    =&gt; 148-0-211</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
