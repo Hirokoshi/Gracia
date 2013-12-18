@@ -4,7 +4,7 @@ Gracia is a quick library to create and manage images with php.
 
 This library can be used only to create or manage **empty** images. GraciaJPG and GraciaPNG are coming soon :-).
 
-**Last stable version : 0.2.5**
+**Last stable version : 0.2.7**
 
 License
 ----------
@@ -69,7 +69,6 @@ Draws a polygon. The parameter *vals* is an array which determines the coordinat
     );
 
     $obj->drawPolygon($coords, 'black', 2);
-
 
 
 ###fusion
@@ -203,6 +202,16 @@ Makes the image smoother.
 
 ######Example
 `$obj->smooth(56)`
+
+Styles
+----------
+The following styles can be used only with setLine method **for the moment** :
+
+- solid
+
+- dotted
+
+- double
 
 Colors legend
 ----------

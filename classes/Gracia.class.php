@@ -23,7 +23,7 @@
  *  Gracia is a quick library to create and manage pictures with php
  *  Author: Elyas Kamel
  *  Contact: hirokoshi@gw2.fr OR melyasfa@gmail.com
- *  @version 0.2.6
+ *  @version 0.2.7
  */
 
 /**
@@ -274,13 +274,14 @@ class Gracia {
     }
 
     /**
-     * @desc Draw a line in the current picture
+     * @desc Draws a line in the current picture
      * @param $x1
      * @param $y1
      * @param $x2
      * @param $y2
-     * @param string $colorName
+     * @param $colorName
      * @param int $density_pxl
+     * @param string $style
      */
     public function setLine($x1, $y1, $x2, $y2, $colorName, $density_pxl = 1, $style = 'solid') {
         $x1 = (int) $x1;
@@ -324,7 +325,31 @@ class Gracia {
                     }
                 }
                 break;
+            case 'double':
+                $m = $density_pxl / 3;
 
+                if($y1 == $y2) {
+                    for($i = 0; $i < ceil($m); $i++) {
+                        imageline($this->img, $x1, ($y1 + $m) + $i, $x2, ($y2 + $m) + $i, $color);
+                        imageline($this->img, $x1, ($y1 - $m) + $i, $x2, ($y2 - $m) + $i, $color);
+                    }
+                } else if($x1 == $x2) {
+                    for($i = 0; $i < ceil($m); $i++) {
+                        imageline($this->img, ($x1 + $m) + $i, $y1, ($x2 + $m) + $i, $y2, $color);
+                        imageline($this->img, ($x1 - $m) + $i, $y1, ($x2 - $m) + $i, $y2, $color);
+                    }
+                } else {
+                    $a = ($y2 - $y1) / ($x2 - $x1);
+                    $fx = $m / sqrt(1 + pow($a, 2));
+                    $fy = $m / sqrt(1 + 1/pow($a, 2));
+                    $fy *= ($y2 - $y1) / abs($y2 - $y1);
+
+                    for($i = 0; $i < ceil($m); $i++) {
+                        imageline($this->img, round($x1 - $fy), round($y1 + $fx) + $i, round($x2 - $fy), round($y2 + $fx) + $i, $color);
+                        imageline($this->img, round($x1 + $fy), round($y1 - $fx) + $i, round($x2 + $fy), round($y2 - $fx) + $i, $color);
+                    }
+                }
+                break;
         }
     }
 
@@ -353,6 +378,10 @@ class Gracia {
     private function getLineVars(& $i1, & $i2, & $nb, & $i, $style, $density, $dist) {
         switch($style) {
             case 'dotted':
+                $i1 = 1;
+                $i2 = 1;
+                break;
+            default;
                 $i1 = 1;
                 $i2 = 1;
                 break;
