@@ -4,7 +4,7 @@ Gracia is a quick library to create and manage images with php.
 
 This library can be used only to create or manage **empty** images. GraciaJPG and GraciaPNG are coming soon :-).
 
-**Last stable version : 0.2.7**
+**Last stable version : 0.3**
 
 License
 ----------
@@ -47,6 +47,22 @@ This method creates a thumbnail from the current image and saves it in *thumb_na
 
 ######Example
 `$obj->createThumbnail('img/thumb_picture'); //creates a thumbnail "thumb_picture.png" in the img folder`
+
+###drawEllipse
+`drawEllipse(int $center_x, int $center_y, int $width, int $height, string $colorName, int $density = 1, string $style = 'solid')`
+
+Draws an ellipse.
+
+$center_x : x center
+$center_y : y center
+$width : the width of the ellipse
+$height : the height of the ellipse
+$colorName : the color of the ellipse
+$density : the density of the ellipse
+$style : the style of the ellipse
+
+######Example
+`$obj->drawEllipse(33, 35, 40, 50, 'black', 10, 'solid');`
 
 ###drawRightTriangle
 `drawRightTriangle(int $adjacent_side, int $opposite_side, int $x, int $y, string $colorName, int $density = 1)`
@@ -205,7 +221,7 @@ Makes the image smoother.
 
 Styles
 ----------
-The following styles can be used only with setLine method **for the moment** :
+The following styles can be used only with setLine and drawEllipse methods **for the moment** :
 
 - solid
 

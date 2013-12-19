@@ -23,7 +23,7 @@
  *  Gracia is a quick library to create and manage pictures with php
  *  Author: Elyas Kamel
  *  Contact: hirokoshi@gw2.fr OR melyasfa@gmail.com
- *  @version 0.2.7
+ *  @version 0.3
  */
 
 /**
@@ -201,6 +201,8 @@ class GraciaColor {
 class Gracia {
     protected $img, $name, $x, $y, $bgcolor, $font_path;
 
+    const PI = 3.14;
+
     public function __construct($name, $x, $y, $bgcolor = null) {
         if(is_string($name) && is_int($x) && is_int($y)) {
             $this->x = $x;
@@ -216,7 +218,6 @@ class Gracia {
             throw new GraciaException('Please specify correct values.');
         }
     }
-    
 
     /**
      * @desc Set color GD from hexadecimal color
@@ -365,6 +366,611 @@ class Gracia {
         return sqrt(pow(($x2 - $x1), 2) + pow(($y2 - $y1), 2));
     }
 
+
+    /**
+     * @param $center_x
+     * @param $center_y
+     * @param $width
+     * @param $height
+     * @param $colorName
+     * @param int $density
+     * @param string $style
+     */
+    public function drawEllipse($center_x, $center_y, $width, $height, $colorName, $density = 1, $style = 'solid') {
+        $center_x = (int) $center_x;
+        $center_y = (int) $center_y;
+        $width = (int) $width;
+        $height = (int) $height;
+        $style = (string) $style;
+
+        $color = $this->getColorAllocate(new GraciaColor($colorName));
+
+        $perim = $this->getCirclePerimeter($width, $height);
+        $this->getLineVars($i1, $i2, $nb, $i, $style, $density, $perim);
+
+        switch($style) {
+            case 'solid':
+                $this->setEllipse($center_x, $center_y, $width, $height, $color, $density);
+                break;
+            case 'dotted':
+                if($i > 1) {
+                    for($j = 0; $j < $i - 1; $j++) {
+                        $angle = $this->degreesToRadian($j * 360 / ($i - 1));
+                        $x = $center_x + 0.5 * $width * cos($angle);
+                        $y = $center_y + 0.5 * $height * sin($angle);
+
+                        imagefilledellipse($this->img, round($x), round($y), $density, $density, $color);
+                    }
+                } else {
+                    $this->setEllipse($center_x, $center_y, $width, $height, $color, $density);
+                }
+                break;
+            case 'double':
+                $reduction = $density / 3;
+                $this->setEllipse($center_y, $center_y, $width + 2 * $reduction, $height + 2 * $reduction, $color, $reduction);
+                $this->setEllipse($center_y, $center_y, $width - 2 * $reduction, $height - 2 * $reduction, $color, $reduction);
+                break;
+            case 'dashed':
+                if($i > 1) {
+                    for($j = 0; $j < $i - 1; $j++) {
+                        $a1 = $j * 360 * ($i - 1);
+                        $a2 = $a1 + 360 * ($i1) / $nb;
+
+                        $this->setEllipseArc($center_x, $center_y, $width, $height, $a1, $a2, $color, $density);
+                    }
+                } else {
+                    $this->setEllipse($center_x, $center_y, $width, $height, $color, $density);
+                }
+        }
+    }
+
+    /**
+     * @param $center_x
+     * @param $center_y
+     * @param $width
+     * @param $height
+     * @param $color
+     * @param $density
+     */
+    private function setEllipse($center_x, $center_y, $width, $height, $color, $density) {
+        $perim = floor($this->getCirclePerimeter($width, $height));
+        $width = round($width);
+        $height = round($height);
+
+        if($perim >= 2) {
+            if($density > 1) {
+                $points = array();
+                $a = 0;
+                $angle = $this->degreesToRadian(360 / ($perim - 1));
+
+                for($i = 0; $i < $perim; $i++) {
+                    $points[] = round($center_x + 0.5 * ($width + $density) * cos($a));
+                    $points[] = round($center_y + 0.5 * ($height + $density) * sin($a));
+                    $a += $angle;
+                }
+
+                $a -= $angle;
+
+                for($i = 0; $i < $perim; $i++) {
+                    $points[] = round($center_x + 0.5 * ($width - $density) * cos($a));
+                    $points[] = round($center_y + 0.5 * ($height - $density) * sin($a));
+                    $a -= $angle;
+                }
+
+                imagefilledpolygon($this->img, $points, $perim * 2, $color);
+            } else {
+                imageellipse($this->img, $center_x, $center_y, $width, $height, $color);
+            }
+        } else {
+            imageellipse($this->img, $center_x, $center_y, $width, $height, $color);
+        }
+    }
+
+    /**
+     * @param $center_x
+     * @param $center_y
+     * @param $width
+     * @param $height
+     * @param $start
+     * @param $end
+     * @param $color
+     * @param $density
+     */
+    private function setEllipseArc($center_x, $center_y, $width, $height, $start, $end, $color, $density) {
+        $this->setCircleAngle($start, $end);
+
+        $n = floor(abs($end - $start) * $this->getCirclePerimeter($width, $height) / 360);
+        $width = round($width);
+        $height = round($height);
+
+        if($n >= 2) {
+            $points = array();
+
+            if($density > 1) {
+                $this->getEllipseVars($e1, $e2, $density);
+
+                if($density % 2 == 0)
+                    $e1--;
+                else $e2--;
+
+                $list = array();
+                $points = $this->getEllipsePoints($width + 2 * $e1, $height + 2 *$e1, $start, $end);
+
+                $n = count($points);
+
+                for($i = 0; $i < $n; $i++)
+                    $list[] = array($center_x + $points[$i][0], $center_y + $points[$i][1]);
+
+                $points = array_reverse($this->getEllipsePoints($width - 2 * $e2, $height - 2 * $e2, $start, $end));
+                $n = count($points);
+
+                for($i = 0; $i < $n; $i++)
+                    $list[] = array($center_x + $points[$i][0], $center_y + $points[$i][1]);
+
+                $this->drawFilledPolygon($list, $color);
+            } else {
+                $points = $this->getEllipsePoints($width, $height, $start, $end);
+
+                for($i = 0; $i < count($points); $i++)
+                    imagesetpixel($this->img, $center_x + $points[$i][0], $center_y + $points[$i][1], $color);
+            }
+        } else {
+            imageline(
+                $this->img,
+                $center_x + 0.5 * $width * cos($this->degreesToRadian($end)),
+                $center_y + 0.5 * $height * sin($this->degreesToRadian($end)),
+                $center_x + 0.5 * $width * cos($this->degreesToRadian($start)),
+                $center_y + 0.5 * $height * sin($this->degreesToRadian($start)),
+                $color
+            );
+        }
+    }
+
+    /**
+     * @desc Return the perimeter of a circle
+     * @param int $width
+     * @param int $height
+     * @return int
+     */
+    private function getCirclePerimeter($width, $height) {
+        return 2 * self::PI * sqrt((pow($width, 2) / 8) + (pow($height, 2) / 8));
+    }
+
+    /**
+     * @desc Set the angle to 360
+     * @param int $first_angle
+     * @param null int $second_angle
+     */
+    private function setCircleAngle(& $first_angle, & $second_angle = null) {
+        if(is_null($second_angle)) {
+            while($first_angle < 0)
+                $first_angle += 360;
+
+            while($first_angle >= 360)
+                $first_angle -= 360;
+        } else {
+            while($first_angle < 0) {
+                $first_angle += 360;
+                $second_angle += 360;
+            }
+
+            while($first_angle >= 360) {
+                $first_angle -= 360;
+                $second_angle -= 360;
+            }
+
+            while($second_angle < 0) {
+                $first_angle += 360;
+                $second_angle += 360;
+            }
+        }
+
+    }
+
+    /**
+     * @param int $e1
+     * @param int $e2
+     * @param int $density
+     */
+    private function getEllipseVars(& $e1, & $e2, $density) {
+        $e1 = floor($density / 2);
+        $e2 = $density - $e1;
+    }
+
+    /**
+     * @desc Return the angle of a line
+     * @param int $x1
+     * @param int $y1
+     * @param int $x2
+     * @param int $y2
+     * @return float|int
+     */
+    private function getLineAngle($x1, $y1, $x2, $y2) {
+        if($x1 < $x2) {
+            // arc tangente
+            return atan(($y2 - $y1) / ($x2 - $y1)) * 180 * self::PI;
+        } else if($x1 == $x2) {
+            if($y1 < $y2)
+                return 90;
+            else return -90;
+        } else {
+            if($y1 < $y2) {
+                return 180 + atan(($y2 - $y1) / ($x2 - $x1)) * 180 * self::PI;
+            } else {
+                return -180 + atan(($y2 - $y1) / ($x2 - $x1)) * 180 * self::PI;
+            }
+        }
+    }
+
+    /**
+     * @param int $width
+     * @param int $height
+     * @param int $start
+     * @param int $end
+     * @return array
+     */
+    private function getEllipsePoints($width, $height, $start, $end) {
+        $p1 = array();
+        $p2 = array();
+        $p3 = array();
+        $p4 = array();
+
+        $a = floor($width / 2);
+        $b = floor($height / 2);
+
+        if($width % 2 == 0)
+            $a--;
+
+        if($height % 2 == 0)
+            $b--;
+
+        $x = 0; $y = $b;
+        $d1 = pow($b, 2) - pow($a, 2) * $b - pow($a, 2) / 4;
+
+        $p1[] = array($x, $y);
+        $p2[] = array(-$x, $y);
+        $p3[] = array(-$x, -$y);
+        $p4[] = array($x, -$y);
+
+        while(pow($a, 2) * ($y - 0.5) > pow($b, 2) * ($x + 1)) {
+            if($d1 < 0) {
+                $d1 += pow($b, 2) * (2 * $x + 3);
+                $x++;
+            } else {
+                $d1 += pow($b, 2) * (2 * $x + 3) + pow($a, 2) * (-2 * $y + 2);
+                $x++;
+                $y--;
+            }
+
+            $p1[] = array($x, $y);
+            $p2[] = array(-$x, $y);
+            $p3[] = array(-$x, -$y);
+            $p4[] = array($x, -$y);
+        }
+
+        $d2 = pow($b, 2) * pow(($x + 0.5), 2) + pow($a, 2) * pow(($y - 1), 2) - pow($a, 2) * pow($b, 2);
+
+        while($y > 0) {
+            if($d2 < 0) {
+                $d2 += pow($b, 2) * (2 * $x + 2) + pow($a, 2) * (-2 * $y + 3);
+                $y--;
+                $x++;
+            } else {
+                $d2 += pow($a, 2) * (-2 * $y + 3);
+                $y--;
+            }
+
+            $p1[] = array($x, $y);
+            $p2[] = array(-$x, $y);
+            $p3[] = array(-$x, -$y);
+            $p4[] = array($x, -$y);
+        }
+
+        $p = array_merge(array_reverse($p1), $p2, array_reverse($p3), $p4);
+        $i = 0; $n = count($p);
+        $r = array();
+
+        do {
+            $angle = $this->getLineAngle(0, 0, $p[$i][0], $p[$i][1]);
+
+            if($angle < 0)
+                $angle += 360;
+
+            if($angle >= $start)
+                break;
+            $i++;
+        } while($i < $n);
+
+        if($i >= $n)
+            $i = 0;
+
+        $d = 0;
+
+        do {
+            $angle = $this->getLineAngle(0, 0, $p[$i][0], $p[$i][1]);
+
+            if($angle < 0)
+                $angle += 360;
+
+            $angle += $d;
+
+            if($angle <= $end)
+                $r[] = $p[$i];
+            else
+                break;
+
+            $i++;
+
+            if($i >= $n) {
+                $i = 0;
+                $d += 360;
+            }
+        } while(true);
+
+        $l = array();
+        $n = count($r);
+
+        if($n > 0) {
+            $l[] = $r[0];
+
+            for($i = 1; $i < $n; $i++) {
+                if($r[$i][0] != $r[$i - 1][0] || $r[$i][1] != $r[$i - 1][1]) {
+                    $l[] = $r[$i];
+                }
+            }
+        }
+
+        return $l;
+    }
+
+    /**
+     * @param $points
+     * @param $color
+     */
+    private function drawFilledPolygon($points, $color) {
+        $scanline = 99999;
+
+        $all_edges = array();
+        $n = count($points);
+
+        for($i = 0; $i < $n; $i++) {
+            $p1 = $points[$i];
+
+            if($i == $n - 1)
+                $p2 = $points[0];
+            else $p2 = $points[$i + 1];
+
+            $x1 = $p1[0];
+            $y1 = $p1[1];
+            $x2 = $p2[0];
+            $y2 = $p2[1];
+
+            if($y1 != $y2) {
+                $inverse = ($x2 - $x1) / ($y2 - $y1);
+
+                if($y1 < $y2) {
+                    $ymin = $y1;
+                    $xval = $x1;
+                    $ymax = $y2;
+                } else {
+                    $ymin = $y2;
+                    $xval = $x2;
+                    $ymax = $y1;
+                }
+
+                $all_edges[] = array($ymin, $ymax, $xval, $inverse);
+
+                if($ymin < $scanline)
+                    $scanline = $ymin;
+            } else {
+                if($y1 < $scanline)
+                    $scanline = $y1;
+
+                if($y2 < $scanline)
+                    $scanline = $y2;
+            }
+        }
+
+        $save_edges = $all_edges;
+
+        $active = array();
+        $pixels = array();
+
+        while(count($all_edges) + count($active) > 0) {
+            $_tmp = array();
+            $n = count($all_edges);
+
+            $added = false;
+            for($i = 0; $i < $n; $i++) {
+                if($all_edges[$i][0] == $scanline) {
+                    $active[] = $all_edges[$i];
+                    $added = true;
+                } else {
+                    $_tmp[] = $all_edges[$i];
+                }
+            }
+
+            $all_edges = $_tmp;
+
+            $_tmp = array();
+            $n = count($active);
+
+            for($i = 0; $i < $n; $i++) {
+                if($active[$i][1] > $scanline)
+                    $_tmp[] = $active[$i];
+            }
+
+            $active = $_tmp;
+
+            $n = count($active);
+
+            for($i = 0; $i < $n; $i++) {
+                $min = $i;
+
+                for($j = $i + 1; $j < $n; $j++) {
+                    if($active[$j][2] < $active[$min][2])
+                        $min = $j;
+                }
+
+                if($i != $min) {
+                    $_tmp = $active[$i];
+                    $active[$i] = $active[$min];
+                    $active[$min] = $_tmp;
+                }
+            }
+
+            $pixels[$scanline] = array();
+            $n = count($active);
+
+            for($i = 0; $i < $n; $i += 2) {
+                if($i + 1 < $n) {
+                    if($active[$i][2] == $active[$i + 1][2]) {
+                        $x1 = intval(round($active[$i][2]));
+                        $pixels[$scanline][] = array($x1, $x1);
+                    } else {
+                        $x1 = intval(round($active[$i][2]));
+                        $x2 = intval(round($active[$i + 1][2]));
+                        $pixels[$scanline][] = array($x1, $x2);
+                    }
+                }
+            }
+
+            $ok = true;
+            $_tmp = array();
+            $n = count($pixels[$scanline]);
+            for($i = 0; $i < $n - 1; $i++) {
+                list($x1, $x2) = $pixels[$scanline][$i];
+
+                do {
+                    $i++;
+                    $ok = false;
+
+                    list($_x1, $_x2) = $pixels[$scanline][$i];
+
+                    if($x2 >= $_x1) {
+                        $x2 = $_x2;
+                        $ok = true;
+
+                        if($i == $n - 1)
+                            $i++;
+                    }
+                } while($ok && $i < $n - 1);
+
+                $i--;
+                $_tmp[] = array($x1, $x2);
+            }
+
+            if($i == $n - 1) {
+                list($x1, $x2) = $pixels[$scanline][$n - 1];
+                $_tmp[] = array($x1, $x2);
+            }
+
+            $pixels[$scanline] = $_tmp;
+
+            foreach($pixels[$scanline] as $s) {
+                if($s[0] == $s[1]) {
+                    imagesetpixel($this->img, $s[0], $scanline, $color);
+                } else
+                    imageline($this->img, $s[0], $scanline, $s[1], $scanline, $color);
+            }
+
+            $n = count($active);
+            for($i = 0; $i < $n; $i++) {
+                $active[$i][2] += $active[$i][3];
+            }
+
+            $scanline++;
+        }
+
+        $n = count($points);
+
+        for($i = 0; $i < $n; $i++) {
+            $p1 = $points[$i];
+
+            if($i == $n - 1)
+                $p2 = $points[0];
+            else $p2 = $points[$i + 1];
+
+            $x1 = $p1[0]; $y1 = $p1[1];
+            $x2 = $p2[0]; $y2 = $p2[1];
+
+            if($y1 == $y2) {
+                if($x1 > $x2) {
+                    $tmp = $x2;
+                    $x2 = $x1;
+                    $x1 = $tmp;
+                }
+
+                $draw = array();
+
+                if(!empty($pixels[$y1])) {
+                    foreach($pixels[$y1] as $se) {
+                        list($_x1, $_x2) = $se;
+
+                        for($x = $_x1; $x <= $_x2; $x++)
+                            $draw[$x] = true;
+                    }
+                }
+
+                $s = null;
+
+                for($x = intval($x1); $x <= $x2; $x++) {
+                    if(array_key_exists($x, $draw)) {
+                        if($s !== null) {
+                            $pixels[$y1][] = array($s, $x - 1);
+                            $s = null;
+                        }
+                    } else {
+                        if($s === null)
+                            $s = $x;
+                        imagesetpixel($this->img, $x, $y1, $color);
+                    }
+                }
+
+                if($s !== null)
+                    $pixels[$y1][] = array($s, $x - 1);
+
+            }
+        }
+
+        foreach($save_edges as $edge) {
+            list($ymin, $ymax, $xval, $inverse) = $edge;
+
+            for($y = intval($ymin); $y <= $ymax; $y++) {
+                $x = intval(round($xval));
+
+                if(array_key_exists($y, $pixels)) {
+                    $draw = array();
+
+                    foreach($pixels[$y] as $se) {
+                        list($_x1, $_x2) = $se;
+
+                        for($k = $_x1; $k <= $_x2; $k++)
+                            $draw[$k] = true;
+                    }
+
+                    if(!array_key_exists($x, $draw)) {
+                        imagesetpixel($this->img, $x, $y, $color);
+                        $pixels[$y][] = array($x, $x);
+                    }
+                } else {
+                    imagesetpixel($this->img, $x, $y, $color);
+                    $pixels[$y][] = array($x, $x);
+                }
+
+                $xval += $inverse;
+            }
+        }
+    }
+
+    /**
+     * @param float/double $deg
+     * @return float
+     */
+    private function degreesToRadian($deg) {
+        return self::PI * $deg / 180;
+    }
+
     /**
      * @desc Getting differents variables for line styles
      * @param int $i1
@@ -380,6 +986,10 @@ class Gracia {
             case 'dotted':
                 $i1 = 1;
                 $i2 = 1;
+                break;
+            case 'dashed':
+                $i1 = 3;
+                $i2 = 2;
                 break;
             default;
                 $i1 = 1;
