@@ -23,7 +23,7 @@
  *  Gracia is a quick library to create and manage pictures with php
  *  Author: Elyas Kamel
  *  Contact: hirokoshi@gw2.fr OR melyasfa@gmail.com
- *  @version 0.3
+ *  @version 0.3.2
  */
 
 /**
@@ -366,6 +366,32 @@ class Gracia {
         return sqrt(pow(($x2 - $x1), 2) + pow(($y2 - $y1), 2));
     }
 
+    /**
+     * @param $value
+     * @param $max
+     */
+    private function getCenterValue(& $value, $max) {
+        $value = round(floatval($value) * $max / 100);
+    }
+
+
+    /**
+     * @param $center_x
+     * @param $center_y
+     * @param $radius
+     * @param $colorName
+     * @param int $density
+     * @param string $style
+     */
+    public function drawCircle($center_x, $center_y, $radius, $colorName, $density = 1, $style = 'solid') {
+        $this->getCenterValue($center_x, $this->x);
+        $this->getCenterValue($center_y, $this->y);
+        $radius = (int) $radius;
+        $density = (int) $density;
+        $style = (string) $style;
+
+        $this->drawEllipse($center_x, $center_y, $radius * 2, $radius * 2, $colorName, $density, $style);
+    }
 
     /**
      * @param $center_x
@@ -377,8 +403,8 @@ class Gracia {
      * @param string $style
      */
     public function drawEllipse($center_x, $center_y, $width, $height, $colorName, $density = 1, $style = 'solid') {
-        $center_x = (int) $center_x;
-        $center_y = (int) $center_y;
+        $this->getCenterValue($center_x, $this->x);
+        $this->getCenterValue($center_y, $this->y);
         $width = (int) $width;
         $height = (int) $height;
         $style = (string) $style;
@@ -421,6 +447,7 @@ class Gracia {
                 } else {
                     $this->setEllipse($center_x, $center_y, $width, $height, $color, $density);
                 }
+                break;
         }
     }
 

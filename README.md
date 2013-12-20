@@ -4,7 +4,7 @@ Gracia is a quick library to create and manage images with php.
 
 This library can be used only to create or manage **empty** images. GraciaJPG and GraciaPNG are coming soon :-).
 
-**Last stable version : 0.3**
+**Last stable version : 0.3.2**
 
 License
 ----------
@@ -48,18 +48,33 @@ This method creates a thumbnail from the current image and saves it in *thumb_na
 ######Example
 `$obj->createThumbnail('img/thumb_picture'); //creates a thumbnail "thumb_picture.png" in the img folder`
 
+###drawCircle
+`drawCircle(int $center_x, int $center_y, int $radius, string $colorName, int $density = 1, string $style = 'solid')`
+
+Draws a circle.
+
+- $center_x : x center
+- $center_y : y center
+- $radius : the radius of the circle
+- $colorName : the color of the circle
+- $density : the density
+- $style : the style (dashed, double, solid)
+
+######Example
+`$obj->drawCircle(25, 25, 20, 'gray', 10, 'solid');`
+
 ###drawEllipse
 `drawEllipse(int $center_x, int $center_y, int $width, int $height, string $colorName, int $density = 1, string $style = 'solid')`
 
 Draws an ellipse.
 
-$center_x : x center
-$center_y : y center
-$width : the width of the ellipse
-$height : the height of the ellipse
-$colorName : the color of the ellipse
-$density : the density of the ellipse
-$style : the style of the ellipse
+- $center_x : x center
+- $center_y : y center
+- $width : the width of the ellipse
+- $height : the height of the ellipse
+- $colorName : the color of the ellipse
+- $density : the density of the ellipse
+- $style : the style of the ellipse (dashed, double, solid)
 
 ######Example
 `$obj->drawEllipse(33, 35, 40, 50, 'black', 10, 'solid');`
